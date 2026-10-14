@@ -21,7 +21,7 @@ shadow-md flex items-center justify-between"
       {/* Right Side */}
       <div className="flex items-center gap-3 sm:gap-5">
         {/* Optional Signup button hidden on mobile */}
-        <button
+        {/* <button
           className="
       hidden sm:block
       px-4 py-2
@@ -33,10 +33,10 @@ shadow-md flex items-center justify-between"
     "
         >
           Sign Up
-        </button>
+        </button> */}
 
         {/* Login Button */}
-        <button
+        {/* <button
           className="
         px-4 sm:px-5 py-2
         rounded-xl
@@ -51,7 +51,7 @@ shadow-md flex items-center justify-between"
       "
         >
           Login
-        </button>
+        </button> */}
       </div>
     </nav>
   );

@@ -1,8 +1,9 @@
 import { useState } from "react";
+import { loginUser } from "../Service/api/api";
 
-export default function LoginForm({ goRegister, goForgot }) {
+export default function LoginForm({ goRegister, goForgot, goUserShow }) {
   const [loginData, setLoginData] = useState({
-    username: "",
+    userName: "",
     password: "",
   });
 
@@ -13,18 +14,27 @@ export default function LoginForm({ goRegister, goForgot }) {
     });
   };
 
-  const handleLogin = () => {
-    console.log(loginData);
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await loginUser(loginData);
+      alert(response.message);
+      localStorage.setItem("token", response.token);
+      goUserShow();
+    } catch (error) {
+      console.log(error);
+      alert("Login Failed. Try again");
+    }
   };
 
   return (
-    <>
+    <form onSubmit={handleLogin}>
       <h2 className="text-2xl font-bold mb-6">Login</h2>
 
       <input
-        name="username"
+        name="userName"
         placeholder="Username"
-        value={loginData.username}
+        value={loginData.userName}
         onChange={handleChange}
         className="w-full border p-3 mb-4 rounded-lg"
       />
@@ -46,7 +56,7 @@ export default function LoginForm({ goRegister, goForgot }) {
       </p>
 
       <button
-        onClick={handleLogin}
+        type="submit"
         className="w-full bg-cyan-400 py-3 rounded-lg mt-5 font-bold"
       >
         Login
@@ -61,6 +71,6 @@ export default function LoginForm({ goRegister, goForgot }) {
           Sign Up
         </span>
       </p>
-    </>
+    </form>
   );
 }

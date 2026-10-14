@@ -3,26 +3,65 @@ import LoginForm from "./LoginForm";
 import RegisterForm from "./RegisterForm";
 import ForgotPassword from "./ForgotPassword";
 import OtpVerify from "./OtpVerify";
+import UserShow from "./UserShow";
 import loginlog from "../assets/loginlog.png";
 
 export default function AuthModal() {
-  const [activeForm, setActiveForm] = useState("login");
+  const [activeForm, setActiveForm] = useState(() =>
+    localStorage.getItem("token") ? "userShow" : "login",
+  );
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    setActiveForm("login");
+  };
+
+  const renderActiveForm = () => {
+    switch (activeForm) {
+      case "login":
+        return (
+          <LoginForm
+            goRegister={() => setActiveForm("register")}
+            goForgot={() => setActiveForm("forgot")}
+            goUserShow={() => setActiveForm("userShow")}
+          />
+        );
+
+      case "register":
+        return (
+          <RegisterForm
+            goLogin={() => setActiveForm("login")}
+            goOtp={() => setActiveForm("otp")}
+          />
+        );
+
+      case "forgot":
+        return <ForgotPassword goLogin={() => setActiveForm("login")} />;
+
+      case "otp":
+        return (
+          <OtpVerify
+            goLogin={() => setActiveForm("login")}
+            goUserShow={() => setActiveForm("userShow")}
+          />
+        );
+
+      case "userShow":
+        return <UserShow goLogout={handleLogout} />;
+
+      default:
+        return null;
+    }
+  };
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2">
-      {/* LEFT SIDE */}
-      <div
-        className="
-      hidden md:flex 
-      items-center justify-center
-      bg-gradient-to-br from-cyan-500 to-blue-600
-    "
-      >
+    <div className="grid grid-cols-1 md:grid-cols-2 min-h-screen">
+      {/* Left Side */}
+      <div className="hidden md:flex items-center justify-center bg-gradient-to-br from-cyan-500 to-blue-600">
         <div className="text-center">
-          {/* Replace with your image */}
           <img
             src={loginlog}
-            alt="Auth Illustration"
+            alt="Authentication illustration"
             className="w-[300px] mx-auto"
           />
 
@@ -34,30 +73,10 @@ export default function AuthModal() {
         </div>
       </div>
 
-      {/* RIGHT SIDE */}
-      <div className="flex justify-center items-center bg-slate-50 px-4">
+      {/* Right Side */}
+      <div className="flex justify-center items-center bg-slate-50 px-4 py-8">
         <div className="w-full max-w-[430px] bg-white p-8 rounded-2xl shadow-xl">
-          {activeForm === "login" && (
-            <LoginForm
-              goRegister={() => setActiveForm("register")}
-              goForgot={() => setActiveForm("forgot")}
-            />
-          )}
-
-          {activeForm === "register" && (
-            <RegisterForm
-              goLogin={() => setActiveForm("login")}
-              goOtp={() => setActiveForm("otp")}
-            />
-          )}
-
-          {activeForm === "forgot" && (
-            <ForgotPassword goLogin={() => setActiveForm("login")} />
-          )}
-
-          {activeForm === "otp" && (
-            <OtpVerify goLogin={() => setActiveForm("login")} />
-          )}
+          {renderActiveForm()}
         </div>
       </div>
     </div>

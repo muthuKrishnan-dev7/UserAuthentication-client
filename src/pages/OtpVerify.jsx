@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
+import { otpVerify } from "../Service/api/api";
 
-export default function OtpVerify({ goLogin }) {
+export default function OtpVerify({ goLogin, goUserShow }) {
   const [otpData, setOtpData] = useState({
     otp1: "",
     otp2: "",
@@ -22,7 +23,6 @@ export default function OtpVerify({ goLogin }) {
         return prev - 1;
       });
     }, 1000);
-
     return () => clearInterval(interval);
   }, []);
 
@@ -33,14 +33,26 @@ export default function OtpVerify({ goLogin }) {
     });
   };
 
-  const handleVerify = () => {
-    console.log(otpData);
-    alert("Signup Successful");
-    goLogin();
+  const handleVerify = async (e) => {
+    e.preventDefault();
+    const OTP = Object.values(otpData).join("");
+    const email = localStorage.getItem("email");
+    try {
+      const response = await otpVerify(email, OTP);
+      console.log("Otp Verification Done:", response);
+      localStorage.removeItem("email");
+      localStorage.setItem("token", response.token);
+      goUserShow();
+      // === want to go to the user page ===
+    } catch (error) {
+      console.log(error);
+      alert("Register Failed. Try again");
+      goLogin();
+    }
   };
 
   return (
-    <>
+    <form onSubmit={handleVerify}>
       <h2 className="text-2xl font-bold mb-6">Verify OTP</h2>
 
       <div className="flex gap-2 justify-center mb-4">
@@ -62,11 +74,11 @@ export default function OtpVerify({ goLogin }) {
       </p>
 
       <button
-        onClick={handleVerify}
+        type="submit"
         className="w-full bg-cyan-400 py-3 rounded-lg font-bold"
       >
         Verify OTP
       </button>
-    </>
+    </form>
   );
 }
