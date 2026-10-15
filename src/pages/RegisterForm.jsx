@@ -46,6 +46,7 @@ export default function RegisterForm({ goOtp, goLogin }) {
       const response = await registerUser(userData);
       console.log("Registration successful:", response);
       localStorage.setItem("email", response.email);
+      localStorage.setItem("otp", response.message);
       goOtp(response.email);
     } catch (error) {
       console.error(error);

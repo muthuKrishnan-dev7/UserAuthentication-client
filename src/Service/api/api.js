@@ -98,3 +98,39 @@ export async function editUser(data) {
 
   return result;
 }
+
+export async function emailCheck(data) {
+  const response = await fetch(`${BASE_URL}/api/auth/email-check`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Accept: "application/json",
+    },
+    body: JSON.stringify(data),
+  });
+  const result = await response.json();
+  if (!response.ok) {
+    throw new Error(
+      result.message || "Your email not registerd. please register.",
+    );
+  }
+  return result;
+}
+
+export async function resetPassword(data) {
+  const response = await fetch(`${BASE_URL}/api/auth/forgot-password`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Accept: "application/json",
+    },
+    body: JSON.stringify(data),
+  });
+  const result = await response.json();
+  if (!response.ok) {
+    throw new Error(
+      result.message || "Your email not registerd. please register.",
+    );
+  }
+  return result;
+}

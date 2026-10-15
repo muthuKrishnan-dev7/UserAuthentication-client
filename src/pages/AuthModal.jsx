@@ -5,6 +5,7 @@ import ForgotPassword from "./ForgotPassword";
 import OtpVerify from "./OtpVerify";
 import UserShow from "./UserShow";
 import loginlog from "../assets/loginlog.png";
+import ForgotPassword2 from "./ForgotPassword2";
 
 export default function AuthModal() {
   const [activeForm, setActiveForm] = useState(() =>
@@ -36,7 +37,15 @@ export default function AuthModal() {
         );
 
       case "forgot":
-        return <ForgotPassword goLogin={() => setActiveForm("login")} />;
+        return (
+          <ForgotPassword
+            goNewPassword={() => setActiveForm("newPassword")}
+            goLogin={() => setActiveForm("login")}
+          />
+        );
+
+      case "newPassword":
+        return <ForgotPassword2 goLogin={() => setActiveForm("login")} />;
 
       case "otp":
         return (
@@ -55,7 +64,7 @@ export default function AuthModal() {
   };
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 min-h-screen">
+    <div className="grid grid-cols-1 md:grid-cols-2 md:min-h-screen">
       {/* Left Side */}
       <div className="hidden md:flex items-center justify-center bg-gradient-to-br from-cyan-500 to-blue-600">
         <div className="text-center">
@@ -74,8 +83,8 @@ export default function AuthModal() {
       </div>
 
       {/* Right Side */}
-      <div className="flex justify-center items-center bg-slate-50 px-4 py-8">
-        <div className="w-full max-w-[430px] bg-white p-8 rounded-2xl shadow-xl">
+      <div className="flex justify-center items-start md:items-center bg-slate-50 px-4 py-6 md:py-8">
+        <div className="w-full max-w-[430px] bg-white p-6 md:p-8 rounded-2xl shadow-xl">
           {renderActiveForm()}
         </div>
       </div>

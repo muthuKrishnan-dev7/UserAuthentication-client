@@ -1,20 +1,29 @@
 import { useState } from "react";
+import { emailCheck } from "../Service/api/api";
 
-export default function ForgotPassword({ goLogin }) {
+export default function ForgotPassword({ goNewPassword, goLogin }) {
   const [forgotData, setForgotData] = useState({
-    email: "",
+    userName: "",
   });
 
   const handleChange = (e) => {
     setForgotData({
       ...forgotData,
-      email: e.target.value,
+      userName: e.target.value,
     });
   };
 
-  const handleSubmit = () => {
-    console.log(forgotData);
-    alert("Reset link sent");
+  const handleSubmit = async (e) => {
+    e.preventDefault({ goLogin });
+    try {
+      const response = await emailCheck(forgotData);
+      alert(response.email);
+      localStorage.setItem("email", response.email);
+      goNewPassword();
+    } catch (error) {
+      console.log(error);
+      alert("Email not registered yet before. Please Register first.");
+    }
   };
 
   return (
@@ -23,7 +32,7 @@ export default function ForgotPassword({ goLogin }) {
 
       <input
         placeholder="Enter Email"
-        value={forgotData.email}
+        value={forgotData.userName}
         onChange={handleChange}
         className="w-full border p-3 rounded-lg"
       />

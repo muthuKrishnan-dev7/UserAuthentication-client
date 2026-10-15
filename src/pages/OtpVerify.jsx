@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { otpVerify } from "../Service/api/api";
 
 export default function OtpVerify({ goLogin, goUserShow }) {
@@ -12,8 +12,18 @@ export default function OtpVerify({ goLogin, goUserShow }) {
   });
 
   const [timer, setTimer] = useState(180);
+  const inputRefs = useRef([]);
 
   useEffect(() => {
+    alert(
+      "Your OTP: " +
+        localStorage.getItem("otp") +
+        "\nYou can also see your OTP on Console.",
+    );
+    console.log(localStorage.getItem("otp"));
+
+    inputRefs.current[0]?.focus();
+
     const interval = setInterval(() => {
       setTimer((prev) => {
         if (prev <= 1) {
@@ -26,11 +36,24 @@ export default function OtpVerify({ goLogin, goUserShow }) {
     return () => clearInterval(interval);
   }, []);
 
-  const handleChange = (e) => {
+  const handleChange = (e, index) => {
+    const value = e.target.value;
+    if (!/^\d*$/.test(value)) return; // digits mattum
+
     setOtpData({
       ...otpData,
-      [e.target.name]: e.target.value,
+      [e.target.name]: value,
     });
+
+    if (value && index < 5) {
+      inputRefs.current[index + 1].focus();
+    }
+  };
+
+  const handleKeyDown = (e, index) => {
+    if (e.key === "Backspace" && !otpData[e.target.name] && index > 0) {
+      inputRefs.current[index - 1].focus();
+    }
   };
 
   const handleVerify = async (e) => {
@@ -43,7 +66,6 @@ export default function OtpVerify({ goLogin, goUserShow }) {
       localStorage.removeItem("email");
       localStorage.setItem("token", response.token);
       goUserShow();
-      // === want to go to the user page ===
     } catch (error) {
       console.log(error);
       alert("Register Failed. Try again");
@@ -56,13 +78,15 @@ export default function OtpVerify({ goLogin, goUserShow }) {
       <h2 className="text-2xl font-bold mb-6">Verify OTP</h2>
 
       <div className="flex gap-2 justify-center mb-4">
-        {Object.keys(otpData).map((key) => (
+        {Object.keys(otpData).map((key, index) => (
           <input
             key={key}
+            ref={(el) => (inputRefs.current[index] = el)}
             maxLength="1"
             name={key}
             value={otpData[key]}
-            onChange={handleChange}
+            onChange={(e) => handleChange(e, index)}
+            onKeyDown={(e) => handleKeyDown(e, index)}
             className="w-12 h-12 border text-center rounded-lg"
           />
         ))}
